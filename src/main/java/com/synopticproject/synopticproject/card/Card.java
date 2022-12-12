@@ -5,10 +5,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Optional;
+import java.util.Random;
 
 @Entity
 @Data
@@ -35,11 +37,4 @@ public class Card {
     private int pin;
 
 
-    private Long generateEmployeeId(){
-        return 1L;
-    }
-
-    private boolean validateMobileNumber(){
-        return true;
-    }
 }
