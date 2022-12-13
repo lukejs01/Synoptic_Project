@@ -3,10 +3,7 @@ package com.synopticproject.synopticproject.card;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(value = "/card")
@@ -27,4 +24,11 @@ public class CardController {
     public void registerCard(@RequestBody Card card){
         service.registerCard(card);
     }
+
+//    @GetMapping(value = "/tap/{cardId}/{pin}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public String tap(@PathVariable String cardId,
+//                      @PathVariable int pin){
+//
+//    }
 }

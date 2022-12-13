@@ -25,12 +25,33 @@ public class CardService {
         }
         card.setMobileNumber(validatePrefixMobileNumber(card.getMobileNumber()));
 
-        if (!validatePinForRegistering(card.getPin())){
+        if (!validatePinForRegistering(card.getPin())) {
             return HttpStatus.valueOf("Invalid Pin number");
         }
 
         repository.save(card);
         return HttpStatus.CREATED;
+    }
+
+    public String tap(String cardId, int pin) {
+        Card card = new Card();
+
+        if (repository.findById(cardId).isPresent()) {
+            card = repository.findById(cardId).get();
+        } else {
+            return "You need to register this card";
+        }
+
+        if (pin != card.getPin()){
+            return "Incorrect Pin";
+        }
+
+        /*
+        if active and tap then turn inactive
+         */
+
+        // if inactive change live and last login
+        return "Welcome";
     }
 
     /*
@@ -102,8 +123,8 @@ public class CardService {
     /*
         - Checks whether the pin is 4 digits long
      */
-    private boolean validatePinForRegistering(int pin){
-        if (String.valueOf(pin).length() != 4){
+    private boolean validatePinForRegistering(int pin) {
+        if (String.valueOf(pin).length() != 4) {
             return false;
         }
         return true;
@@ -113,7 +134,7 @@ public class CardService {
         - Measure taken as H2 removes the 0 from the beginning of numbers when saved
         - Will add a 0 the number has be retrieved from the db
      */
-    private String getFormattedMobileNumber(String number){
+    private String getFormattedMobileNumber(String number) {
         return "0" + number;
     }
 }

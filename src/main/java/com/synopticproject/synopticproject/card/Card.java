@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.Instant;
 
 
 @Entity
@@ -35,5 +36,8 @@ public class Card {
     @NotNull
     private int pin;
 
+    private Instant lastLogin = Instant.now();
+
+    private boolean liveStatus = false;
 
 }
