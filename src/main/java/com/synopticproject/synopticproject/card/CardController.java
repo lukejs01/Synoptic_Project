@@ -15,6 +15,13 @@ public class CardController {
     @Autowired
     private CardService service;
 
+    /*
+        - Controller for saving a new card within the database
+        - Values should be passed in the body of a http request
+     */
+    /**
+     * @should save card if data is correct
+     */
     @PostMapping(value = "/register")
     @ResponseStatus(HttpStatus.OK)
     public void registerCard(@RequestBody Card card){
