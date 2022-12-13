@@ -1,9 +1,9 @@
 package com.synopticproject.synopticproject.card;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -12,7 +12,21 @@ public class CardService {
     @Autowired
     private CardRepository repository;
 
-    private String generateCardId(){
+
+    public HttpStatus registerCard(Card card) {
+        card.setCardId(validateCardId());
+
+        if (!validateMobileNumber(card.getMobileNumber())) {
+            return HttpStatus.valueOf("Incorrect mobile number");
+        }
+        card.setMobileNumber(validatePrefixMobileNumber(card.getMobileNumber()));
+
+        repository.save(card);
+        return HttpStatus.CREATED;
+    }
+
+
+    private String generateCardId() {
         Random random = new Random();
         String character = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         String id = "";
@@ -24,40 +38,41 @@ public class CardService {
         return id;
     }
 
-    private String validateCardId(){
+    private String validateCardId() {
         String id = "";
         boolean state = false;
 
-        while (!state){
+        while (!state) {
             id = generateCardId();
             var toCheck = repository.findById(id);
-            if (toCheck.isEmpty()){
+            if (toCheck.isEmpty()) {
                 state = true;
             }
         }
         return id;
     }
 
-    private Long generateEmployeeId(){
-        Long lastId = repository.findTopByOrderByEmployeeIdDesc();
 
-        return lastId + 1L;
+    private String validatePrefixMobileNumber(String number) {
+        if (number.startsWith("44")) {
+            number = number.substring(2);
+            number = "0" + number;
+        }
+        return number;
     }
 
-    private boolean validateMobileNumber(Long number){
-        String numToString = number.toString();
-
-        if (numToString.startsWith("44")){
-            numToString = numToString.substring(2);
-            numToString = "0" + numToString;
-        }
-        if (!numToString.startsWith("07")){
+    private boolean validateMobileNumber(String number) {
+        number = validatePrefixMobileNumber(number);
+        if (!number.startsWith("07")) {
             return false;
         }
-        if (numToString.length() != 11){
+        if (number.length() != 11) {
             return false;
         }
-
         return true;
+    }
+
+    private String getFormattedMobileNumber(String number){
+        return "0" + number;
     }
 }
