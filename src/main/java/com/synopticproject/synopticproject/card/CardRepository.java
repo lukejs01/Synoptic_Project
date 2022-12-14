@@ -12,13 +12,13 @@ import java.time.Instant;
 public interface CardRepository extends JpaRepository<Card, String> {
 
     @Modifying
-    @Query(value = " update Card c set c.liveStatus = :status where c.cardId = :cardId", nativeQuery = true)
+    @Query(value = " update Card c set c.live_Status = :status where c.card_Id = :cardId", nativeQuery = true)
     void changeLive(@Param("status") boolean status, @Param("cardId") String cardId);
 
     @Modifying
-    @Query(value = " update Card c set c.lastLogin = :lastLogin where c.cardId = :cardId", nativeQuery = true)
+    @Query(value = " update Card c set c.last_Login = :lastLogin where c.card_Id = :cardId", nativeQuery = true)
     void updateLastLogin(@Param("lastLogin") Instant lastLogin, @Param("cardId") String cardId);
 
-    @Query(value = " select c.lastLogin from Card c where c.cardId = :cardId")
+    @Query(value = " select c.last_Login from Card c where c.card_Id = :cardId", nativeQuery = true)
     Instant getLastLogin(@Param("cardId") String cardId);
 }

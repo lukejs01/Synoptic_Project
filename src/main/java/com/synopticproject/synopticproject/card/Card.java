@@ -1,5 +1,6 @@
 package com.synopticproject.synopticproject.card;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
@@ -38,6 +39,7 @@ public class Card {
 
     private Instant lastLogin = Instant.now();
 
+    @Column
     private boolean liveStatus = false;
 
 }

@@ -16,19 +16,20 @@ public class CardController {
         - Controller for saving a new card within the database
         - Values should be passed in the body of a http request
      */
+
     /**
      * @should save card if data is correct
      */
     @PostMapping(value = "/register")
     @ResponseStatus(HttpStatus.OK)
-    public void registerCard(@RequestBody Card card){
+    public void registerCard(@RequestBody Card card) {
         service.registerCard(card);
     }
 
-//    @GetMapping(value = "/tap/{cardId}/{pin}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public String tap(@PathVariable String cardId,
-//                      @PathVariable int pin){
-//
-//    }
+    @GetMapping(value = "/tap/{cardId}/{pin}")
+    @ResponseBody
+    public String tap(@PathVariable String cardId,
+                      @PathVariable int pin) {
+        return service.tap(cardId, pin);
+    }
 }

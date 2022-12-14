@@ -3,7 +3,9 @@ package com.synopticproject.synopticproject.card;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Random;
 
 @Service
@@ -33,8 +35,9 @@ public class CardService {
         return HttpStatus.CREATED;
     }
 
+    @Transactional
     public String tap(String cardId, int pin) {
-        Card card = new Card();
+        Card card;
 
         if (repository.findById(cardId).isPresent()) {
             card = repository.findById(cardId).get();
@@ -42,15 +45,22 @@ public class CardService {
             return "You need to register this card";
         }
 
-        if (pin != card.getPin()){
+        // if card id doesnt match for second go
+
+        if (pin != card.getPin()) {
             return "Incorrect Pin";
         }
 
-        /*
-        if active and tap then turn inactive
-         */
+        if (card.isLiveStatus()) {
+            repository.changeLive(false, card.getCardId());
+            return "Goodbye";
+        }
 
-        // if inactive change live and last login
+        if (!card.isLiveStatus()) {
+            repository.changeLive(true, card.getCardId());
+            repository.updateLastLogin(Instant.now(), card.getCardId());
+        }
+
         return "Welcome";
     }
 
