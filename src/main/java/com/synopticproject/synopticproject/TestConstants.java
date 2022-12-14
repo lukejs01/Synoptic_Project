@@ -2,6 +2,8 @@ package com.synopticproject.synopticproject;
 
 import com.synopticproject.synopticproject.card.Card;
 
+import java.time.Instant;
+
 public class TestConstants {
 
 
@@ -12,6 +14,8 @@ public class TestConstants {
         card.setEmail("TEST");
         card.setMobileNumber("07111111111");
         card.setPin(1234);
+        card.setBalance(0.0);
+        card.setLastLogin(Instant.now());
 
         return card;
     }

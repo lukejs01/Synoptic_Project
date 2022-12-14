@@ -37,9 +37,13 @@ public class Card {
     @NotNull
     private int pin;
 
+    @Column
     private Instant lastLogin = Instant.now();
 
     @Column
     private boolean liveStatus = false;
+
+    @Column
+    private Double balance;
 
 }

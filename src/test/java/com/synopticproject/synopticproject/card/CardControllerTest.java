@@ -22,7 +22,7 @@ public class CardControllerTest {
     private CardRepository repository;
 
     @BeforeEach
-    void beforeEach(){
+    void beforeEach() {
         repository.deleteAll();
     }
 
@@ -46,5 +46,76 @@ public class CardControllerTest {
 
         Assertions.assertEquals(16, repository.findAll().get(0).getCardId().length());
         Assertions.assertEquals("TEST", repository.findAll().get(0).getName());
+    }
+
+    /**
+     * @verifies return either welcome or goodbye depending on the status of the card
+     * @see CardController#tap(String, int)
+     */
+    @Test
+    public void tap_shouldReturnEitherWelcomeOrGoodbyeDependingOnTheStatusOfTheCard() {
+
+        Card card = TestConstants.newCard(1L);
+
+        WebTestClient.ResponseSpec saveCard = webTestClient
+                .post().uri("/card/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(card), Card.class)
+                .exchange();
+        Assertions.assertEquals(16, repository.findAll().get(0).getCardId().length());
+        String cardId = repository.findAll().get(0).getCardId();
+
+        WebTestClient.ResponseSpec response = webTestClient
+                .get().uri("/card/tap/{cardId}/{pin}", cardId, card.getPin())
+                .exchange();
+
+        response.expectStatus().isOk();
+
+
+        String result = response
+                .returnResult(String.class)
+                .getResponseBody()
+                .single()
+                .block();
+
+        Assertions.assertEquals("Welcome", result);
+    }
+
+    /**
+     * @verifies return goodbye when the card is active
+     * @see CardController#tap(String, int)
+     */
+    @Test
+    public void tap_shouldReturnGoodbyeWhenTheCardIsActive() {
+        Card card = TestConstants.newCard(1L);
+
+        WebTestClient.ResponseSpec saveCard = webTestClient
+                .post().uri("/card/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(card), Card.class)
+                .exchange();
+        Assertions.assertEquals(16, repository.findAll().get(0).getCardId().length());
+        String cardId = repository.findAll().get(0).getCardId();
+
+        WebTestClient.ResponseSpec welcomeTap = webTestClient
+                .get().uri("/card/tap/{cardId}/{pin}", cardId, card.getPin())
+                .exchange();
+
+        WebTestClient.ResponseSpec response = webTestClient
+                .get().uri("/card/tap/{cardId}/{pin}", cardId, card.getPin())
+                .exchange();
+
+        response.expectStatus().isOk();
+
+
+        String result = response
+                .returnResult(String.class)
+                .getResponseBody()
+                .single()
+                .block();
+
+        Assertions.assertEquals("Goodbye", result);
     }
 }

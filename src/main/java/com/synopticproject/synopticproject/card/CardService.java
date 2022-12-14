@@ -1,7 +1,6 @@
 package com.synopticproject.synopticproject.card;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,22 +18,36 @@ public class CardService {
         - Validation on the card is completed here
         - If card fails validation the service should return http response
      */
-    public HttpStatus registerCard(Card card) {
+
+    /**
+     * @should return incorrect number if the amount of digits are wrong
+     * @should return invalid pin if pin does not match
+     * @should return http status CREATED if card was created
+     * @should register card
+     */
+    public String registerCard(Card card) {
         card.setCardId(validateCardId());
 
         if (!validateMobileNumber(card.getMobileNumber())) {
-            return HttpStatus.valueOf("Incorrect mobile number");
+            return "Incorrect mobile number";
         }
         card.setMobileNumber(validatePrefixMobileNumber(card.getMobileNumber()));
 
         if (!validatePinForRegistering(card.getPin())) {
-            return HttpStatus.valueOf("Invalid Pin number");
+            return "Invalid pin number";
         }
 
         repository.save(card);
-        return HttpStatus.CREATED;
+        return "CREATED";
     }
 
+    /**
+     * @should return register card if not found
+     * @should return incorrect pin if pin is wrong
+     * @should return card timed out on next tap if its been over 2 minutes
+     * @should say goodbye on second tap of card
+     * @should say welcome on the first tap of card
+     */
     @Transactional
     public String tap(String cardId, int pin) {
         Card card;
@@ -45,13 +58,15 @@ public class CardService {
             return "You need to register this card";
         }
 
-        // if card id doesnt match for second go
-
         if (pin != card.getPin()) {
             return "Incorrect Pin";
         }
 
         if (card.isLiveStatus()) {
+            if (!isStillLive(card.getLastLogin())){
+                repository.changeLive(false, card.getCardId());
+                return "Card transaction timed out";
+            }
             repository.changeLive(false, card.getCardId());
             return "Goodbye";
         }
@@ -146,5 +161,18 @@ public class CardService {
      */
     private String getFormattedMobileNumber(String number) {
         return "0" + number;
+    }
+
+    private boolean isStillLive(Instant lastLogin) {
+        Long lastLoginInstant = lastLogin.getEpochSecond();
+        Long nowInstant = Instant.now().getEpochSecond();
+
+        Long difference = nowInstant - lastLoginInstant;
+
+        if (difference > 120) {
+            return false;
+        }
+
+        return true;
     }
 }

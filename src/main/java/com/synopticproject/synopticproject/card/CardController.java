@@ -26,6 +26,10 @@ public class CardController {
         service.registerCard(card);
     }
 
+    /**
+     * @should return either welcome or goodbye depending on the status of the card
+     * @should return goodbye when the card is active
+     */
     @GetMapping(value = "/tap/{cardId}/{pin}")
     @ResponseBody
     public String tap(@PathVariable String cardId,
