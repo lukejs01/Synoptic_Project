@@ -41,6 +41,13 @@ public class CardService {
         return "CREATED";
     }
 
+
+    /*
+        - Validates card pin to login
+        - Changes the status of the card to live so transactions can be made
+        - Tracks the time between taps to determine timeout time
+        - Returns strings which are messages to the user
+     */
     /**
      * @should return register card if not found
      * @should return incorrect pin if pin is wrong
@@ -163,6 +170,10 @@ public class CardService {
         return "0" + number;
     }
 
+    /*
+        - Compares time from last login to next use to determine the time between
+        - Over 2 minutes will return a false result and indicates inactivity
+     */
     private boolean isStillLive(Instant lastLogin) {
         Long lastLoginInstant = lastLogin.getEpochSecond();
         Long nowInstant = Instant.now().getEpochSecond();

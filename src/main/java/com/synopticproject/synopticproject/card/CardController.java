@@ -26,6 +26,9 @@ public class CardController {
         service.registerCard(card);
     }
 
+    /*
+        - Tap API is the implementation of logging in and out of the kiosk
+     */
     /**
      * @should return either welcome or goodbye depending on the status of the card
      * @should return goodbye when the card is active
