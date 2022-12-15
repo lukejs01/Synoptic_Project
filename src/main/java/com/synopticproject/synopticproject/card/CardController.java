@@ -29,6 +29,7 @@ public class CardController {
     /*
         - Tap API is the implementation of logging in and out of the kiosk
      */
+
     /**
      * @should return either welcome or goodbye depending on the status of the card
      * @should return goodbye when the card is active
@@ -38,5 +39,19 @@ public class CardController {
     public String tap(@PathVariable String cardId,
                       @PathVariable int pin) {
         return service.tap(cardId, pin);
+    }
+
+    @PostMapping(value = "/make-purchase/{cardId}/{amount}")
+    @ResponseBody
+    public String makePurchase(@PathVariable String cardId,
+                             @PathVariable Double amount) {
+        return service.makePurchase(cardId, amount);
+    }
+
+    @PostMapping(value = "/top-up/{cardId}/{amount}")
+    @ResponseBody
+    public String topUp(@PathVariable String cardId,
+                      @PathVariable Double amount) {
+        return service.topUp(cardId, amount);
     }
 }

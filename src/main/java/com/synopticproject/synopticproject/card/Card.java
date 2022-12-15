@@ -44,6 +44,6 @@ public class Card {
     private boolean liveStatus = false;
 
     @Column
-    private Double balance;
+    private Double balance = 0.0;
 
 }

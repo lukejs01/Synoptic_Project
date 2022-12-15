@@ -19,10 +19,16 @@ public interface CardRepository extends JpaRepository<Card, String> {
     @Query(value = " update Card c set c.last_Login = :lastLogin where c.card_Id = :cardId", nativeQuery = true)
     void updateLastLogin(@Param("lastLogin") Instant lastLogin, @Param("cardId") String cardId);
 
+    // possibly delete
     @Query(value = " select c.last_Login from Card c where c.card_Id = :cardId", nativeQuery = true)
     Instant getLastLogin(@Param("cardId") String cardId);
 
-    // Only used for testing
+    @Modifying
+    @Query(value = " update Card c set c.balance = :newBalance where c.card_id = :cardId", nativeQuery = true)
+    void updateBalance(@Param("newBalance") Double newBalance, @Param("cardId") String cardId);
+
+
+    // Only used for testing - current not being used
     @Modifying
     @Query(value = " update Card c set c.last_Login = :newInstant where c.card_id = :cardId", nativeQuery = true)
     void updateLastLoginForTest(@Param("newInstant") Instant lastLogin, @Param("cardId") String cardId);

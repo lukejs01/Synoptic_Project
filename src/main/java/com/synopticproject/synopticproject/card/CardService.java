@@ -48,6 +48,7 @@ public class CardService {
         - Tracks the time between taps to determine timeout time
         - Returns strings which are messages to the user
      */
+
     /**
      * @should return register card if not found
      * @should return incorrect pin if pin is wrong
@@ -70,7 +71,7 @@ public class CardService {
         }
 
         if (card.isLiveStatus()) {
-            if (!isStillLive(card.getLastLogin())){
+            if (!isStillLive(card.getLastLogin())) {
                 repository.changeLive(false, card.getCardId());
                 return "Card transaction timed out";
             }
@@ -83,7 +84,51 @@ public class CardService {
             repository.updateLastLogin(Instant.now(), card.getCardId());
         }
 
-        return "Welcome";
+        return "Welcome " + card.getName();
+    }
+
+    @Transactional
+    public String makePurchase(String cardId, Double amount) {
+        Card card = new Card();
+
+        if (repository.findById(cardId).isPresent()) {
+            card = repository.findById(cardId).get();
+        }
+        if (!isStillLive(card.getLastLogin())) {
+            repository.changeLive(false, cardId);
+            card.setLiveStatus(false);
+            return "Card timed out. Tap to log back in";
+        }
+        if (card.isLiveStatus() & (card.getBalance() - amount) < 0.0){
+            repository.changeLive(false, cardId);
+            return "Insufficient funds for purchase";
+        }
+        if (card.isLiveStatus() & (card.getBalance() - amount) > 0.0) {
+            Double newBalance = card.getBalance() - amount;
+            repository.updateBalance(newBalance, cardId);
+            return "Your purchase has been successful";
+        }
+        return "Error with making your purchase";
+    }
+
+    @Transactional
+    public String topUp(String cardId, Double amount) {
+        Card card = new Card();
+
+        if (repository.findById(cardId).isPresent()) {
+            card = repository.findById(cardId).get();
+        }
+        if (!isStillLive(card.getLastLogin())) {
+            repository.changeLive(false,cardId);
+            card.setLiveStatus(false);
+            return "Card timed out. Tap to log back in";
+        }
+        if (card.isLiveStatus()) {
+            Double newBalance = card.getBalance() + amount;
+            repository.updateBalance(newBalance, cardId);
+            return "Your card has been topped up";
+        }
+        return "Error with topping up your card.";
     }
 
     /*
