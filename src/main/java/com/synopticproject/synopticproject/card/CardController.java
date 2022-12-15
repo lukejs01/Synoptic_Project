@@ -41,6 +41,11 @@ public class CardController {
         return service.tap(cardId, pin);
     }
 
+    /*
+        - API for making purchase and altering balance accordingly
+        - Will return string with message/error message
+     */
+
     /**
      * @should alter balance in account and confirm purchase
      */
@@ -50,6 +55,12 @@ public class CardController {
                              @PathVariable Double amount) {
         return service.makePurchase(cardId, amount);
     }
+
+
+    /*
+        - API for topping up balance and altering it accordingly
+        - Will return string with message/error message
+     */
 
     /**
      * @should add funds to balance and confirm transaction

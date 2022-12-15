@@ -87,6 +87,14 @@ public class CardService {
         return "Welcome " + card.getName();
     }
 
+    /*
+        - Retrieves the card for the db
+        - Checks if the card is active ( meaning they have tapped their card once to login )
+        - Completes validating checks
+        - Alters balance on the card
+        - Returns message to user
+     */
+
     /**
      * @should return insufficient funds if purchase is bigger than balance
      * @should make purchase if validations pass
@@ -103,7 +111,7 @@ public class CardService {
             card.setLiveStatus(false);
             return "Card timed out. Tap to log back in";
         }
-        if (card.isLiveStatus() & (card.getBalance() - amount) < 0.0){
+        if (card.isLiveStatus() & (card.getBalance() - amount) < 0.0) {
             repository.changeLive(false, cardId);
             return "Insufficient funds for purchase";
         }
@@ -114,6 +122,14 @@ public class CardService {
         }
         return "Error with making your purchase";
     }
+
+    /*
+        - Retrieves the card for the db
+        - Checks if the card is active ( meaning they have tapped their card once to login )
+        - Completes validating checks
+        - Alters balance on the card
+        - Returns message to user
+     */
 
     /**
      * @should top up card and return message
@@ -126,7 +142,7 @@ public class CardService {
             card = repository.findById(cardId).get();
         }
         if (!isStillLive(card.getLastLogin())) {
-            repository.changeLive(false,cardId);
+            repository.changeLive(false, cardId);
             card.setLiveStatus(false);
             return "Card timed out. Tap to log back in";
         }
