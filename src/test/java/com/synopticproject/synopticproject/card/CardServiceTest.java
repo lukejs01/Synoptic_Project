@@ -151,6 +151,54 @@ public class CardServiceTest {
         service.registerCard(card);
         String cardId = repository.findAll().get(0).getCardId();
 
-        Assertions.assertEquals("Welcome", service.tap(cardId, 1234));
+        Assertions.assertEquals("Welcome " + card.getName(), service.tap(cardId, 1234));
+    }
+
+    /**
+     * @verifies return insufficient funds if purchase is bigger than balance
+     * @see CardService#makePurchase(String, Double)
+     */
+    @Test
+    public void makePurchase_shouldReturnInsufficientFundsIfPurchaseIsBiggerThanBalance() {
+        Card card = TestConstants.newCard(1L);
+        card.setBalance(100.0);
+        service.registerCard(card);
+        String cardId = repository.findAll().get(0).getCardId();
+
+        service.tap(cardId, 1234);
+
+        Assertions.assertEquals("Insufficient funds for purchase", service.makePurchase(cardId, 110.0));
+    }
+
+    /**
+     * @verifies make purchase if validations pass
+     * @see CardService#makePurchase(String, Double)
+     */
+    @Test
+    public void makePurchase_shouldMakePurchaseIfValidationsPass() {
+        Card card = TestConstants.newCard(1L);
+        card.setBalance(100.0);
+        service.registerCard(card);
+        String cardId = repository.findAll().get(0).getCardId();
+
+        service.tap(cardId, 1234);
+        Assertions.assertEquals("Your purchase has been successful", service.makePurchase(cardId, 50.0));
+        service.makePurchase(cardId,50.0);
+        Assertions.assertEquals(50.0, repository.findAll().get(0).getBalance());
+    }
+
+    /**
+     * @verifies top up card and return message
+     * @see CardService#topUp(String, Double)
+     */
+    @Test
+    public void topUp_shouldTopUpCardAndReturnMessage() {
+        Card card = TestConstants.newCard(1L);
+        service.registerCard(card);
+        String cardId = repository.findAll().get(0).getCardId();
+
+        service.tap(cardId, 1234);
+        Assertions.assertEquals("Your card has been topped up", service.topUp(cardId, 50.0));
+        Assertions.assertEquals(50.0, repository.findAll().get(0).getBalance());
     }
 }

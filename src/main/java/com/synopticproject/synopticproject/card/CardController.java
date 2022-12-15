@@ -41,6 +41,9 @@ public class CardController {
         return service.tap(cardId, pin);
     }
 
+    /**
+     * @should alter balance in account and confirm purchase
+     */
     @PostMapping(value = "/make-purchase/{cardId}/{amount}")
     @ResponseBody
     public String makePurchase(@PathVariable String cardId,
@@ -48,6 +51,9 @@ public class CardController {
         return service.makePurchase(cardId, amount);
     }
 
+    /**
+     * @should add funds to balance and confirm transaction
+     */
     @PostMapping(value = "/top-up/{cardId}/{amount}")
     @ResponseBody
     public String topUp(@PathVariable String cardId,

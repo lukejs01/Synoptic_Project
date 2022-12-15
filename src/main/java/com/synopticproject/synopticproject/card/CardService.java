@@ -87,6 +87,10 @@ public class CardService {
         return "Welcome " + card.getName();
     }
 
+    /**
+     * @should return insufficient funds if purchase is bigger than balance
+     * @should make purchase if validations pass
+     */
     @Transactional
     public String makePurchase(String cardId, Double amount) {
         Card card = new Card();
@@ -111,6 +115,9 @@ public class CardService {
         return "Error with making your purchase";
     }
 
+    /**
+     * @should top up card and return message
+     */
     @Transactional
     public String topUp(String cardId, Double amount) {
         Card card = new Card();

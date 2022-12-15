@@ -79,7 +79,7 @@ public class CardControllerTest {
                 .single()
                 .block();
 
-        Assertions.assertEquals("Welcome", result);
+        Assertions.assertEquals("Welcome " + card.getName(), result);
     }
 
     /**
@@ -117,5 +117,75 @@ public class CardControllerTest {
                 .block();
 
         Assertions.assertEquals("Goodbye", result);
+    }
+
+    /**
+     * @verifies alter balance in account and confirm purchase
+     * @see CardController#makePurchase(String, Double)
+     */
+    @Test
+    public void makePurchase_shouldAlterBalanceInAccountAndConfirmPurchase() {
+        Card card = TestConstants.newCard(1L);
+        card.setBalance(100.00);
+
+        WebTestClient.ResponseSpec saveCard = webTestClient
+                .post().uri("/card/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(card), Card.class)
+                .exchange();
+        String cardId = repository.findAll().get(0).getCardId();
+
+        WebTestClient.ResponseSpec welcomeTap = webTestClient
+                .get().uri("/card/tap/{cardId}/{pin}", cardId, card.getPin())
+                .exchange();
+
+        WebTestClient.ResponseSpec purchase = webTestClient
+                .post().uri("/card/make-purchase/{cardId}/{amount}", cardId, 50.00)
+                .exchange();
+
+        String result = purchase
+                .returnResult(String.class)
+                .getResponseBody()
+                .single()
+                .block();
+
+        Assertions.assertEquals("Your purchase has been successful", result);
+        Assertions.assertEquals(50.0, repository.findAll().get(0).getBalance());
+    }
+
+    /**
+     * @verifies add funds to balance and confirm transaction
+     * @see CardController#topUp(String, Double)
+     */
+    @Test
+    public void topUp_shouldAddFundsToBalanceAndConfirmTransaction()  {
+        Card card = TestConstants.newCard(1L);
+        card.setBalance(100.00);
+
+        WebTestClient.ResponseSpec saveCard = webTestClient
+                .post().uri("/card/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(card), Card.class)
+                .exchange();
+        String cardId = repository.findAll().get(0).getCardId();
+
+        WebTestClient.ResponseSpec welcomeTap = webTestClient
+                .get().uri("/card/tap/{cardId}/{pin}", cardId, card.getPin())
+                .exchange();
+
+        WebTestClient.ResponseSpec topUp = webTestClient
+                .post().uri("/card/top-up/{cardId}/{amount}", cardId, 50.00)
+                .exchange();
+
+        String result = topUp
+                .returnResult(String.class)
+                .getResponseBody()
+                .single()
+                .block();
+
+        Assertions.assertEquals("Your card has been topped up", result);
+        Assertions.assertEquals(150.0, repository.findAll().get(0).getBalance());
     }
 }
