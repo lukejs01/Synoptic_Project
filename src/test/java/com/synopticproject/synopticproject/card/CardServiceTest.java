@@ -183,7 +183,7 @@ public class CardServiceTest {
 
         service.tap(cardId, 1234);
         Assertions.assertEquals("Your purchase has been successful", service.makePurchase(cardId, 50.0));
-        service.makePurchase(cardId,50.0);
+        service.makePurchase(cardId, 50.0);
         Assertions.assertEquals(50.0, repository.findAll().get(0).getBalance());
     }
 

@@ -52,7 +52,7 @@ public class CardController {
     @PostMapping(value = "/make-purchase/{cardId}/{amount}")
     @ResponseBody
     public String makePurchase(@PathVariable String cardId,
-                             @PathVariable Double amount) {
+                               @PathVariable Double amount) {
         return service.makePurchase(cardId, amount);
     }
 
@@ -68,7 +68,7 @@ public class CardController {
     @PostMapping(value = "/top-up/{cardId}/{amount}")
     @ResponseBody
     public String topUp(@PathVariable String cardId,
-                      @PathVariable Double amount) {
+                        @PathVariable Double amount) {
         return service.topUp(cardId, amount);
     }
 }

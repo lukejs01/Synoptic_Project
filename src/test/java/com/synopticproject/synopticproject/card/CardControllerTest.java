@@ -159,7 +159,7 @@ public class CardControllerTest {
      * @see CardController#topUp(String, Double)
      */
     @Test
-    public void topUp_shouldAddFundsToBalanceAndConfirmTransaction()  {
+    public void topUp_shouldAddFundsToBalanceAndConfirmTransaction() {
         Card card = TestConstants.newCard(1L);
         card.setBalance(100.00);
 
